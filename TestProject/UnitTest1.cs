@@ -81,6 +81,19 @@ namespace TestProject
         }
 
         [TestMethod]
+        public void XWinGame2()
+        {
+            Board board = new Board();
+            Assert.IsTrue(board.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board.TryMove(Move.Get(false, Move.PositionName.E)));
+            Assert.IsTrue(board.TryMove(Move.Get(true, Move.PositionName.NE)));
+            Assert.IsTrue(board.TryMove(Move.Get(false, Move.PositionName.SE)));
+            Assert.IsTrue(board.TryMove(Move.Get(true, Move.PositionName.SW)));
+            Assert.AreEqual(GameResult.X_Win, board.GetResult());
+        }
+
+
+        [TestMethod]
         public void GetMove()
         {
             Move m = Move.Get(false, Move.PositionName.E);

@@ -30,7 +30,7 @@ namespace TicTacToeLib
         {
             get
             {
-                if (Pos > 8 || Piece > 2) return false;
+                if (Pos > 8 || (Piece != 1 && Piece != 2)) return false;
                 return true;
             }
         }

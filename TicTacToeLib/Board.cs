@@ -15,9 +15,7 @@
 
         public bool TryMove(Move move)
         {
-            if (GetResult() != GameResult.Incomplete) return false;
             if (!IsValid(move)) return false;
-            if (State.Any(m => m != null && m.Pos == move.Pos)) return false;
             State[NextMoveNum] = move;
             TryMakeFinalMove();
             return true;
@@ -45,50 +43,99 @@
 
         public bool IsValid(Move move)
         {
-            if (NextMoveNum > 9) return false;
-            if (!move.IsValid) return false;
-            if (PieceToMove != move.Piece) return false;
-            int moveDiff = State.Count(m => m != null && m.Piece == 1) - State.Count(m => m != null && m.Piece == 2);
-            return moveDiff == 1 || moveDiff == 0;
+            return GetAvailableMoves().Contains(move);
         }
-
 
         public IEnumerable<Move> GetAvailableMoves()
         {
             if (GetResult() != GameResult.Incomplete) yield break;
             int piece = 2;
             if (NextMoveNum % 2 == 0) piece = 1; // X move
-            for (int i = 0; i < 9; i++)
+            IEnumerable<int> existing = State.Where(m => m != null).Select(m => m.Pos).ToArray();
+            for (int i = 0; i<9; i++)
             {
-                if(State[i] == null) yield return new Move((byte)((i << 4) + piece));
+                if(!existing.Contains(i)) yield return new Move((byte)((i << 4) + piece));
             }
         }
 
         public GameResult GetResult()
         {
-            if (NextMoveNum < 5) return GameResult.Incomplete;
+            int nextMove = NextMoveNum;
+            if (nextMove < 5) return GameResult.Incomplete;
+            int _201 = 0, _258 = 0, _603 = 0, _678 = 0, _408 = 0, _417 = 0, _426 = 0, _435 = 0;
+            foreach (Move m in State.Where(m => m != null))
+            {
+                int d = m.Piece == 1 ? 1 : -1;
+                switch (m.Pos)
+                {
+                    case 0:
+                        _201 += d;
+                        _603 += d;
+                        _408 += d;
+                        break;
+                    case 1:
+                        _201 += d;
+                        _417 += d;
+                        break;
+                    case 2:
+                        _258 += d;
+                        _201 += d;
+                        _426 += d;
+                        break;
+                    case 3:
+                        _603 += d;
+                        _435 += d;
+                        break;
+                    case 4:
+                        _408 += d;
+                        _417 += d;
+                        _426 += d;
+                        _435 += d;
+                        break;
+                    case 5:
+                        _258 += d;
+                        _435 += d;
+                        break;
+                    case 6:
+                        _603 += d;
+                        _678 += d;
+                        _426 += d;
+                        break;
+                    case 7:
+                        _678 += d;
+                        _417 += d;
+                        break;
+                    case 8:
+                        _258 += d;
+                        _678 += d;
+                        _408 += d;
+                        break;
+                }
+            }
 
-            int[] x = State.Where(m => m != null && m.Piece == 1).Select(m => m.Pos).ToArray();
-            if (x.Contains(0) && x.Contains(1) && x.Contains(2)) return GameResult.X_Win;
-            if (x.Contains(3) && x.Contains(4) && x.Contains(5)) return GameResult.X_Win;
-            if (x.Contains(6) && x.Contains(7) && x.Contains(8)) return GameResult.X_Win;
-            if (x.Contains(2) && x.Contains(5) && x.Contains(8)) return GameResult.X_Win;
-            if (x.Contains(1) && x.Contains(4) && x.Contains(7)) return GameResult.X_Win;
-            if (x.Contains(0) && x.Contains(3) && x.Contains(6)) return GameResult.X_Win;
-            if (x.Contains(2) && x.Contains(4) && x.Contains(6)) return GameResult.X_Win;
-            if (x.Contains(0) && x.Contains(4) && x.Contains(8)) return GameResult.X_Win;
-
-            int[] o = State.Where(m => m != null && m.Piece == 2).Select(m => m.Pos).ToArray();
-            if (o.Contains(0) && o.Contains(1) && o.Contains(2)) return GameResult.O_Win;
-            if (o.Contains(3) && o.Contains(4) && o.Contains(5)) return GameResult.O_Win;
-            if (o.Contains(6) && o.Contains(7) && o.Contains(8)) return GameResult.O_Win;
-            if (o.Contains(2) && o.Contains(5) && o.Contains(8)) return GameResult.O_Win;
-            if (o.Contains(1) && o.Contains(4) && o.Contains(7)) return GameResult.O_Win;
-            if (o.Contains(0) && o.Contains(3) && o.Contains(6)) return GameResult.O_Win;
-            if (o.Contains(2) && o.Contains(4) && o.Contains(6)) return GameResult.O_Win;
-            if (o.Contains(0) && o.Contains(4) && o.Contains(8)) return GameResult.O_Win;
-
-            if (NextMoveNum < 9) return GameResult.Incomplete;
+            Func<int, GameResult?> f = (int t) =>
+            {
+                if (t == 3) return GameResult.X_Win;
+                else if (t == -3) return GameResult.O_Win;
+                else return null;
+            };
+            var r = f(_201);
+            if (r != null) return r.Value;
+            r = f(_258);
+            if (r != null) return r.Value;
+            r = f(_603);
+            if (r != null) return r.Value;
+            r = f(_678);
+            if (r != null) return r.Value;
+            r = f(_408);
+            if (r != null) return r.Value;
+            r = f(_417);
+            if (r != null) return r.Value;
+            r = f(_426);
+            if (r != null) return r.Value;
+            r = f(_435);
+            if (r != null) return r.Value;
+            if (nextMove < 9) return GameResult.Incomplete;
             return GameResult.Draw;
         }
 
