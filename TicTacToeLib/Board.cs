@@ -17,7 +17,7 @@
         {
             if (!IsValid(move)) return false;
             State[NextMoveNum] = move;
-            TryMakeFinalMove();
+            //TryMakeFinalMove();
             return true;
         }
 
@@ -37,7 +37,8 @@
                     break;
                 }
             }
-            State[8] = new Move((byte)((lastPos << 4) + 0x1));
+            //State[8] = new Move((byte)((lastPos << 4) + 0x1));
+            State[8] = Move.Get(0x01, lastPos);
             return true;
         }
 
@@ -54,7 +55,8 @@
             IEnumerable<int> existing = State.Where(m => m != null).Select(m => m.Pos).ToArray();
             for (int i = 0; i<9; i++)
             {
-                if(!existing.Contains(i)) yield return new Move((byte)((i << 4) + piece));
+                //if(!existing.Contains(i)) yield return new Move((byte)((i << 4) + piece));
+                if(!existing.Contains(i)) yield return Move.Get(piece, i);
             }
         }
 
@@ -148,6 +150,13 @@ $"{pieces[8]}|{pieces[7]}|{pieces[6]}\n-----\n{pieces[5]}|{pieces[4]}|{pieces[3]
 
         }
 
+        public Board Clone()
+        {
+            Board newBoard = new Board();
+            newBoard.State = new Move[9];
+            State.CopyTo(newBoard.State, 0);
+            return newBoard;
+        }
 
     }
 }

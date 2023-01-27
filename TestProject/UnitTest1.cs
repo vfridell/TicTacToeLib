@@ -49,6 +49,7 @@ namespace TestProject
             Assert.IsTrue(board.TryMove(Move.Get(false, Move.PositionName.N)));
             Assert.IsTrue(board.TryMove(Move.Get(true, Move.PositionName.E)));
             Assert.IsTrue(board.TryMove(Move.Get(false, Move.PositionName.W)));
+            Assert.IsTrue(board.TryMove(Move.Get(true, Move.PositionName.NE)));
             Assert.AreEqual(GameResult.Draw, board.GetResult());
         }
 
