@@ -2,6 +2,7 @@
 {
     public class Board
     {
+        // board positions
         // 8|7|6
         // _____
         // 5|4|3
@@ -11,20 +12,22 @@
         // 0x00 == empty
         // 0x1 == X
         // 0x2 == O
+
+        // the State array index is in order of turns 0-8. 
+        // So the first move by X is State[0], first by O is State[1] and so on.
         public Move[] State { get; private set; } = new Move[9];
 
         public bool TryMove(Move move)
         {
             if (!IsValid(move)) return false;
             State[NextMoveNum] = move;
-            //TryMakeFinalMove();
             return true;
         }
 
         public int NextMoveNum => State.Count(m => m != null);
         public int PieceToMove => (NextMoveNum % 2 == 0) ? 1 : 2;
 
-        private bool TryMakeFinalMove()
+        public bool TryMakeFinalMove()
         {
             if (NextMoveNum != 8) return false;
             int lastPos = -1;
@@ -37,7 +40,6 @@
                     break;
                 }
             }
-            //State[8] = new Move((byte)((lastPos << 4) + 0x1));
             State[8] = Move.Get(0x01, lastPos);
             return true;
         }
@@ -55,7 +57,6 @@
             IEnumerable<int> existing = State.Where(m => m != null).Select(m => m.Pos).ToArray();
             for (int i = 0; i<9; i++)
             {
-                //if(!existing.Contains(i)) yield return new Move((byte)((i << 4) + piece));
                 if(!existing.Contains(i)) yield return Move.Get(piece, i);
             }
         }
@@ -141,13 +142,29 @@
             return GameResult.Draw;
         }
 
+        public string[] GetPiecesByPosition(string emptyVal = " ")
+        {
+            string[] pieces = new string[9] { emptyVal, emptyVal, emptyVal, emptyVal, emptyVal, emptyVal, emptyVal, emptyVal, emptyVal };
+            for (int i = 0; i < 9; i++)
+            {
+                if (State[i] == null) continue;
+                else pieces[State[i].Pos] = State[i].ToString();
+            }
+            return pieces;
+        }
+
         public override string ToString()
         {
-            string[] pieces = new string[9];
-            for(int i=0; i<9; i++) pieces[i] = State[i]?.ToString() ?? " ";
+            string[] pieces = GetPiecesByPosition();
             return 
 $"{pieces[8]}|{pieces[7]}|{pieces[6]}\n-----\n{pieces[5]}|{pieces[4]}|{pieces[3]}\n-----\n{pieces[2]}|{pieces[1]}|{pieces[0]}";
 
+        }
+
+        public string KeyString()
+        {
+            string[] pieces = GetPiecesByPosition("_");
+            return $"{pieces[8]}{pieces[7]}{pieces[6]}{pieces[5]}{pieces[4]}{pieces[3]}{pieces[2]}{pieces[1]}{pieces[0]}";
         }
 
         public Board Clone()
@@ -158,5 +175,10 @@ $"{pieces[8]}|{pieces[7]}|{pieces[6]}\n-----\n{pieces[5]}|{pieces[4]}|{pieces[3]
             return newBoard;
         }
 
+        public object GetLabel()
+        {
+            string[] pieces = GetPiecesByPosition();
+            return $"<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\"><tr><td port=\"p8\">{pieces[8]}</td><td port=\"p7\">{pieces[7]}</td><td port=\"p6\">{pieces[6]}</td></tr><tr><td port=\"p5\">{pieces[5]}</td><td port=\"p4\">{pieces[4]}</td><td port=\"p3\">{pieces[3]}</td></tr><tr><td port=\"p2\">{pieces[2]}</td><td port=\"p1\">{pieces[1]}</td><td port=\"p0\">{pieces[0]}</td></tr></table>>";
+        }
     }
 }

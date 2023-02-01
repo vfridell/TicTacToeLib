@@ -93,6 +93,171 @@ namespace TestProject
             Assert.AreEqual(GameResult.X_Win, board.GetResult());
         }
 
+        [TestMethod]
+        public void IsomorphTest1()
+        {
+            //  | |X
+            // _____
+            //  |X|O
+            // -----
+            //  | | 
+            Board board1 = new Board();
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.E)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.NE)));
+            //  | |
+            // _____
+            //  |X|
+            // -----
+            //  |O|X
+            Board board2 = new Board();
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board2.TryMove(Move.Get(false, Move.PositionName.S)));
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.SE)));
+
+            Assert.IsTrue(BoardIsomorphComparer.AreIsomorphs(board1, board2));
+        }
+
+        [TestMethod]
+        public void IsomorphTest2()
+        {
+            //  |X| 
+            // _____
+            //  |X|O
+            // -----
+            //  | | 
+            Board board1 = new Board();
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.E)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.N)));
+            //  | |
+            // _____
+            //  |X|
+            // -----
+            //  |O|X
+            Board board2 = new Board();
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board2.TryMove(Move.Get(false, Move.PositionName.S)));
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.SE)));
+
+            Assert.IsFalse(BoardIsomorphComparer.AreIsomorphs(board1, board2));
+        }
+
+        [TestMethod]
+        public void IsomorphTest3()
+        {
+            //  | | 
+            // _____
+            // X|X|O
+            // -----
+            //  | | 
+            Board board1 = new Board();
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.E)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.W)));
+            //  | |
+            // _____
+            // O|X|X
+            // -----
+            //  | | 
+            Board board2 = new Board();
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board2.TryMove(Move.Get(false, Move.PositionName.W)));
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.E)));
+
+            Assert.IsTrue(BoardIsomorphComparer.AreIsomorphs(board1, board2));
+        }
+
+        [TestMethod]
+        public void IsomorphTest4()
+        {
+            //  | |O 
+            // _____
+            //  |X|
+            // -----
+            // X| | 
+            Board board1 = new Board();
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.NE)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.SW)));
+            //  | |X
+            // _____
+            //  |X| 
+            // -----
+            // O| | 
+            Board board2 = new Board();
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board2.TryMove(Move.Get(false, Move.PositionName.SW)));
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.NE)));
+
+            Assert.IsTrue(BoardIsomorphComparer.AreIsomorphs(board1, board2));
+        }
+
+        [TestMethod]
+        public void IsomorphTest5()
+        {
+            //  |O|O
+            // _____
+            // O|X|
+            // -----
+            // X|X|X
+            Board board1 = new Board();
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.W)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.S)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.N)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.SW)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.NE)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.SE)));
+            // X|X|X
+            // _____
+            //  |X|O
+            // -----
+            // O|O| 
+            Board board2 = new Board();
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board2.TryMove(Move.Get(false, Move.PositionName.E)));
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.N)));
+            Assert.IsTrue(board2.TryMove(Move.Get(false, Move.PositionName.S)));
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.NE)));
+            Assert.IsTrue(board2.TryMove(Move.Get(false, Move.PositionName.SW)));
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.NW)));
+
+            Assert.IsTrue(BoardIsomorphComparer.AreIsomorphs(board1, board2));
+        }
+
+        [TestMethod]
+        public void IsomorphTest6_SameBoard()
+        {
+            //  |O|O
+            // _____
+            // O|X|
+            // -----
+            // X|X|X
+            Board board1 = new Board();
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.W)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.S)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.N)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.SW)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.NE)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.SE)));
+            //  |O|O
+            // _____
+            // O|X|
+            // -----
+            // X|X|X
+            Board board2 = new Board();
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board2.TryMove(Move.Get(false, Move.PositionName.W)));
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.S)));
+            Assert.IsTrue(board2.TryMove(Move.Get(false, Move.PositionName.N)));
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.SW)));
+            Assert.IsTrue(board2.TryMove(Move.Get(false, Move.PositionName.NE)));
+            Assert.IsTrue(board2.TryMove(Move.Get(true, Move.PositionName.SE)));
+
+            Assert.IsTrue(BoardIsomorphComparer.AreIsomorphs(board1, board2));
+        }
 
         [TestMethod]
         public void GetMove()
