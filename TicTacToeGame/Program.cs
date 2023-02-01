@@ -60,8 +60,8 @@ namespace TicTacToeGame
 
         static void WriteDotFileHeaders(StreamWriter sw)
         {
-            string fileHeader = "strict digraph test\n{\ngraph[overlap = \"false\", splines = \"true\", rankdir=LR, ranksep=\"5 equally\"]";
-            string nodeHeader = "node [style=\"filled\",shape=none,fillcolor=white,fontcolor=black,fontname=\"courier new\", fontsize=8]";
+            string fileHeader = "strict digraph Tic-Tac-Toe\n{\ngraph[label=\"Tic-Tac-Toe\" labelloc=t labeljust=c fontsize=128 overlap = \"false\", splines = \"true\", rankdir=TB, ranksep=\"5 equally\", colorscheme=\"oranges9\", bgcolor=2]";
+            string nodeHeader = "node [style=\"filled\",shape=none,fillcolor=\"transparent\",fontcolor=black,fontname=\"courier new\", fontsize=8]";
             sw.WriteLine(fileHeader);
             sw.WriteLine(nodeHeader);
         }
