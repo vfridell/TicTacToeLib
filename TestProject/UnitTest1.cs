@@ -293,5 +293,98 @@ namespace TestProject
             }
             Assert.AreNotEqual(GameResult.Incomplete, board.GetResult());
         }
+
+        [TestMethod]
+        public void PerfectGame1()
+        {
+            Board board = new Board();
+            List<Move> bestMoves = new();
+            while (board.GetResult() == GameResult.Incomplete)
+            {
+                int bestScore = board.PieceToMove == 1 ? int.MinValue : int.MaxValue;
+                Move? bestMove = null;
+                foreach (Move move in board.GetAvailableMoves())
+                {
+                    Board clone = board.Clone();
+                    clone.TryMove(move);
+                    int score = BoardScorer.GetScore(clone);
+                    if (board.PieceToMove == 1)
+                    {
+                        if (score >= bestScore)
+                        {
+                            bestMove = move;
+                            bestScore = score;
+                        }
+                    }
+                    else
+                    {
+                        if (score <= bestScore)
+                        {
+                            bestMove = move;
+                            bestScore = score;
+                        }
+                    }
+                }
+                Assert.IsNotNull(bestMove);
+                if (bestMove != null)
+                {
+                    bestMoves.Add(bestMove);
+                    board.TryMove(bestMove);
+                }
+            }
+            Assert.AreEqual(GameResult.Draw, board.GetResult());
+        }
+
+        [TestMethod]
+        public void Score1()
+        {
+            //  |O|X
+            // _____
+            //  |X|
+            // -----
+            // O| |X
+            Board board1 = new Board();
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.C)));
+            int score = BoardScorer.GetScore(board1);
+            Assert.AreEqual(4, score);
+            
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.N)));
+            score = BoardScorer.GetScore(board1);
+            Assert.AreEqual(2, score);
+            
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.NE)));
+            score = BoardScorer.GetScore(board1);
+            Assert.AreEqual(7, score);
+
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.SW)));
+            score = BoardScorer.GetScore(board1);
+            Assert.AreEqual(1, score);
+            
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.SE)));
+            score = BoardScorer.GetScore(board1);
+            Assert.AreEqual(16, score);
+
+        }
+
+        [TestMethod]
+        public void Score2()
+        {
+            //  |O|O
+            // _____
+            // O|X|
+            // -----
+            // X|X|X
+            Board board1 = new Board();
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.C)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.W)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.S)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.N)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.SW)));
+            Assert.IsTrue(board1.TryMove(Move.Get(false, Move.PositionName.NE)));
+            Assert.IsTrue(board1.TryMove(Move.Get(true, Move.PositionName.SE)));
+            int score = BoardScorer.GetScore(board1);
+            Assert.AreEqual(999, score);
+
+        }
     }
 }

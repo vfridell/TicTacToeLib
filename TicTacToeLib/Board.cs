@@ -196,7 +196,8 @@ $"{pieces[8]}|{pieces[7]}|{pieces[6]}\n-----\n{pieces[5]}|{pieces[4]}|{pieces[3]
                     break;
 
             };
-            return $"<<table {color} border=\"0\" cellborder=\"1\" cellspacing=\"0\"><tr><td port=\"p8\">{pieces[8]}</td><td port=\"p7\">{pieces[7]}</td><td port=\"p6\">{pieces[6]}</td></tr><tr><td port=\"p5\">{pieces[5]}</td><td port=\"p4\">{pieces[4]}</td><td port=\"p3\">{pieces[3]}</td></tr><tr><td port=\"p2\">{pieces[2]}</td><td port=\"p1\">{pieces[1]}</td><td port=\"p0\">{pieces[0]}</td></tr></table>>";
+            int score = BoardScorer.GetScore(this);
+            return $"<<table {color} border=\"0\" cellborder=\"1\" cellspacing=\"0\"><tr><td port=\"p8\">{pieces[8]}</td><td port=\"p7\">{pieces[7]}</td><td port=\"p6\">{pieces[6]}</td></tr><tr><td port=\"p5\">{pieces[5]}</td><td port=\"p4\">{pieces[4]}</td><td port=\"p3\">{pieces[3]}</td></tr><tr><td port=\"p2\">{pieces[2]}</td><td port=\"p1\">{pieces[1]}</td><td port=\"p0\">{pieces[0]}</td></tr><tr><td border=\"0\" COLSPAN=\"3\">{score}</td></tr></table>>";
         }
     }
 }
