@@ -39,8 +39,6 @@ namespace TicTacToeLib
         public int Piece => Value & 0x0F;
 
         public enum PositionName { SE, S, SW, E, C, W, NE, N, NW };
-        //public static Move Get(int piece, int pos)  => new Move((byte)((pos << 4) + piece));
-        //public static Move Get(bool X, PositionName posName) => new Move((byte)(((int)posName << 4) + (X ? 0x1 : 0x2)));
         public static Move Get(int piece, int pos)  => AllMoves[(byte)((pos << 4) + piece)];
         public static Move Get(bool X, PositionName posName)  => AllMoves[(byte)(((int)posName << 4) + (X ? 0x1 : 0x2))];
         public static Dictionary<byte, Move> AllMoves = new();

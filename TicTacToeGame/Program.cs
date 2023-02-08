@@ -5,7 +5,6 @@ namespace TicTacToeGame
 {
     internal class Program
     {
-        //static ColorPicker colors = new("1", "2", "3","4","5","6","7","8","9");
         static ColorPicker colors = new("4","5","6","7","8","9");
         static int LeafLevel = 99;
         static void Main(string[] args)
