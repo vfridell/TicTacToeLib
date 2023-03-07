@@ -17,5 +17,7 @@
         public Board Board;
         public int? Score;
         public List<Node> Futures = new List<Node>();
+        public Node? BestFuture;
+        public Node? BestParent;
     }
 }

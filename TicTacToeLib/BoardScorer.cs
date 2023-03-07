@@ -74,21 +74,34 @@ namespace TicTacToeLib
             var winningTriples = _triples.Where(t => t.UnchallengedPiece > 0 && t.UnchallengedPositions().Count == 3);
             if (winningTriples.Any())
             {
-                if (winningTriples.First().UnchallengedPiece == 1) return 999;
-                else return -999;
+                if (winningTriples.First().UnchallengedPiece == 1)
+                {
+                    return 999 - board.State.Count(m => m!= null && m.Piece == 2);
+                }
+                else
+                {
+                    return -999 + board.State.Count(m => m!=null && m.Piece == 1);;
+                }
             }
 
             int xScore = 0;
             var xTriples = _triples.Where(t => t.UnchallengedPiece == 1);
+            var oTriples = _triples.Where(t => t.UnchallengedPiece == 2);
+
             var xDoubleTriples = xTriples.Where(t => t.UnchallengedPositions().Count > 1);
-            if (board.PieceToMove == 1 && xDoubleTriples.Any()) return 500;
+            if (board.PieceToMove == 1 && xDoubleTriples.Any())
+            {
+                return 500 + xTriples.Count() - oTriples.Count();
+            }
             int xDblUniquePosCount = xDoubleTriples.SelectMany(t => t.UnchallengedPositions()).Distinct().Count();
             xScore = (int)(Math.Pow(2, xDblUniquePosCount) * xDoubleTriples.Count()) + xTriples.Count(t => t.UnchallengedPositions().Count == 1);
 
             int oScore = 0;
-            var oTriples = _triples.Where(t => t.UnchallengedPiece == 2);
             var oDoubleTriples = oTriples.Where(t => t.UnchallengedPositions().Count > 1);
-            if (board.PieceToMove == 2 && oDoubleTriples.Any()) return -500;
+            if (board.PieceToMove == 2 && oDoubleTriples.Any())
+            {
+                return -500 - oTriples.Count() + xTriples.Count();
+            }
             int oDblUniquePosCount = oDoubleTriples.SelectMany(t => t.UnchallengedPositions()).Distinct().Count();
             oScore = (int)(Math.Pow(2, oDblUniquePosCount) * oDoubleTriples.Count()) + oTriples.Count(t => t.UnchallengedPositions().Count == 1);
 

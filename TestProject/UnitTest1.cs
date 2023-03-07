@@ -386,5 +386,35 @@ namespace TestProject
             Assert.AreEqual(999, score);
 
         }
+
+        [TestMethod]
+        public void Score3()
+        {
+            //  |X|X
+            // _____
+            //  |O|
+            // -----
+            // O| |X
+            Board XwinBoard = new Board();
+            Assert.IsTrue(XwinBoard.TryMove(Move.Get(true, Move.PositionName.N)));
+            Assert.IsTrue(XwinBoard.TryMove(Move.Get(false, Move.PositionName.C)));
+            Assert.IsTrue(XwinBoard.TryMove(Move.Get(true, Move.PositionName.SE)));
+            Assert.IsTrue(XwinBoard.TryMove(Move.Get(false, Move.PositionName.SW)));
+            Assert.IsTrue(XwinBoard.TryMove(Move.Get(true, Move.PositionName.NE)));
+
+            Board tryBlock = XwinBoard.Clone();
+            Board tryBlock2 = XwinBoard.Clone();
+            Board noBlock = XwinBoard.Clone();
+
+            tryBlock.TryMove(Move.Get(false, Move.PositionName.NW));
+            tryBlock2.TryMove(Move.Get(false, Move.PositionName.E));
+            noBlock.TryMove(Move.Get(false, Move.PositionName.S));
+
+            int blockScore = BoardScorer.GetScore(tryBlock);
+            int blockScore2 = BoardScorer.GetScore(tryBlock2);
+            int noBlockScore = BoardScorer.GetScore(noBlock);
+
+            Assert.IsTrue(blockScore < noBlockScore);
+        }
     }
 }
