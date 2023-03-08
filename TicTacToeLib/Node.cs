@@ -18,6 +18,7 @@
         public int? Score;
         public List<Node> Futures = new List<Node>();
         public Node? BestFuture;
-        public Node? BestParent;
+        public List<Node> BestParents = new List<Node>();
+
     }
 }

@@ -20,22 +20,23 @@ namespace TicTacToeGame
 
             NegamaxAllTheNodes(root, treeLevels);
             
-            WriteDotFile("TicTacToe_multicolor.dot", 10, root, treeLevels, WriteDotFileEdgesMultiColor);
-            WriteDotFile("TicTacToe_HighlightBestScore.dot", 10, root, treeLevels, WriteDotFileEdgesBestScore);
-            WriteDotFile("TicTacToe_bestScoreForest.dot", 5, root, treeLevels, WriteDotFileEdgesBestScoreOnly);
-            WriteDotFile("TicTacToe_HighlightBestMove.dot", 10, root, treeLevels, WriteDotFileEdgesBestMove);
-            WriteDotFile("TicTacToe_bestMoveForest.dot", 5, root, treeLevels, WriteDotFileEdgesBestMoveOnly);
+            WriteDotFile("TicTacToe_multicolor.dot", 10, root, treeLevels, WriteDotFileNodes, WriteDotFileEdgesMultiColor);
+            //WriteDotFile("TicTacToe_HighlightBestScore.dot", 10, root, treeLevels, WriteDotFileEdgesBestScore);
+            //WriteDotFile("TicTacToe_bestScoreForest.dot", 5, root, treeLevels, WriteDotFileEdgesBestScoreOnly);
+            WriteDotFile("TicTacToe_HighlightBestMove.dot", 10, root, treeLevels, WriteDotFileNodes, WriteDotFileEdgesBestMove);
+            WriteDotFile("TicTacToe_bestMoveForest.dot", 5, root, treeLevels, WriteDotFileNodes, WriteDotFileEdgesBestMoveOnlyManyRoots);
+            WriteDotFile("TicTacToe_bestMoveForestTrimmed.dot", 5, root, treeLevels, null, WriteDotFileEdgesBestMoveOnlySingleRoot);
 
         }
 
-        static void WriteDotFile(string filename, int rankSep, Node root, Dictionary<int, List<Node>> treeLevels, Action<Node, StreamWriter> edgeLogic)
+        static void WriteDotFile(string filename, int rankSep, Node root, Dictionary<int, List<Node>> treeLevels, Action<Node, Dictionary<int, List<Node>>, StreamWriter>? nodeLogic, Action<Node, Dictionary<int, List<Node>>, StreamWriter> edgeLogic)
         {
             using (StreamWriter sw = new StreamWriter(File.Open(filename, FileMode.Create, FileAccess.Write), System.Text.Encoding.ASCII))
             {
                 sw.NewLine = "\n";
                 WriteDotFileHeaders(rankSep, sw);
-                WriteDotFileNodes(root, treeLevels, sw);
-                edgeLogic(root, sw);
+                if(nodeLogic != null) nodeLogic(root, treeLevels, sw);
+                edgeLogic(root, treeLevels, sw);
                 sw.WriteLine("}");
             }
         }
@@ -86,7 +87,7 @@ namespace TicTacToeGame
                 val = NegamaxRoot(root, player, depth);
                 depth++;
             }
-            root.BestFuture!.BestParent = root;
+            root.BestFuture!.BestParents.Add(root);
 
             for (int l = 0; l < 9; l++)
             {
@@ -101,7 +102,7 @@ namespace TicTacToeGame
                         val = NegamaxRoot(node, player, depth);
                         depth++;
                     }
-                    if (node.BestFuture != null) node.BestFuture.BestParent = node;
+                    if (node.BestFuture != null) node.BestFuture.BestParents.Add(node);
                 }
             }
         }
@@ -165,17 +166,17 @@ namespace TicTacToeGame
             }
         }
 
-        static void WriteDotFileEdgesMultiColor(Node node, StreamWriter sw)
+        static void WriteDotFileEdgesMultiColor(Node node, Dictionary<int, List<Node>> _, StreamWriter sw)
         {
             if (!node.Futures.Any()) return;
             foreach (Node n in node.Futures)
             {
                 sw.WriteLine($"_{node.Board.KeyString()} -> _{n.Board.KeyString()} [color=\"{colors.Next()}\"] ");
-                WriteDotFileEdgesMultiColor(n, sw);
+                WriteDotFileEdgesMultiColor(n, _, sw);
             }
         }
 
-        static void WriteDotFileEdgesBestMove(Node node, StreamWriter sw)
+        static void WriteDotFileEdgesBestMove(Node node, Dictionary<int, List<Node>> _, StreamWriter sw)
         {
             if (!node.Futures.Any()) return;
             foreach (Node n in node.Futures)
@@ -185,19 +186,81 @@ namespace TicTacToeGame
                 else color = "3";
 
                 sw.WriteLine($"_{node.Board.KeyString()} -> _{n.Board.KeyString()} [color=\"{color}\"] ");
-                WriteDotFileEdgesBestMove(n, sw);
+                WriteDotFileEdgesBestMove(n, _, sw);
             }
         }
 
-        static void WriteDotFileEdgesBestMoveOnly(Node node, StreamWriter sw)
+        static int BestMoveSubtreeHeight(Node node)
+        {
+            Node current = node;
+            int height = 1;
+            foreach (Node parent in current.BestParents)
+            {
+                int newHeight = BestMoveSubtreeHeight(parent) + 1;
+                height = Math.Max(height, newHeight);
+            }
+            return height;
+        }
+
+        static void WriteDotFileEdgesBestMoveOnlySingleRoot(Node node, Dictionary<int, List<Node>> treeLevels, StreamWriter sw)
+        {
+            sw.WriteLine($"__________ -> _____X____ [style=\"dashed\"] ");
+            sw.WriteLine($"__________ -> ________X_ [style=\"dashed\"] ");
+            sw.WriteLine($"__________ -> invis1 [style=\"invis\"] ");
+            sw.WriteLine($"invis1 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis2 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis3 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis4 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis5 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis6 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis7 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis8 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis1 -> invis2 [style=\"invis\"]");
+            sw.WriteLine($"invis2 -> invis3 [style=\"invis\"]");
+            sw.WriteLine($"invis3 -> invis4 [style=\"invis\"]");
+            sw.WriteLine($"invis4 -> invis5 [style=\"invis\"]");
+            sw.WriteLine($"invis5 -> invis6 [style=\"invis\"]");
+            sw.WriteLine($"invis6 -> invis7 [style=\"invis\"]");
+            sw.WriteLine($"invis7 -> invis8 [style=\"invis\"]");
+
+            foreach (Node n in treeLevels[LeafLevel])
+            {
+                int height = BestMoveSubtreeHeight(n);
+                if (height < 5) continue;
+                WriteNode(node, sw);
+                WriteDotFileEdgesFromLeaves(n, sw);
+            }
+        }
+
+        static void WriteDotFileEdgesFromLeaves(Node node, StreamWriter sw)
+        {
+            WriteNode(node, sw);
+            if (!node.BestParents.Any() && node.Board.NextMoveNum > 1)
+            {
+                int invisParentNum = node.Board.NextMoveNum - 1;
+                sw.WriteLine($"invis{invisParentNum} -> _{node.Board.KeyString()} [style=\"invis\"]");
+                return;
+            }
+            foreach (Node n in node.BestParents)
+            {
+                string color = "9";
+
+                sw.WriteLine($"_{n.Board.KeyString()} -> _{node.Board.KeyString()} [color=\"{color}\"] ");
+                WriteDotFileEdgesFromLeaves(n, sw);
+            }
+
+        }
+
+        static void WriteDotFileEdgesBestMoveOnlyManyRoots(Node node, Dictionary<int, List<Node>> _, StreamWriter sw)
         {
             if (!node.Futures.Any()) return;
             string color = "9";
 
             // force a link that makes the tree look cool
-            if (node.Board.State.Count(m => m != null) == 0)
+            if (node.Board.NextMoveNum == 0)
             {
-                sw.WriteLine($"__________ -> _____X____ [color=\"{color}\"] ");
+                sw.WriteLine($"__________ -> _____X____ [style=\"dashed\"] ");
+                sw.WriteLine($"__________ -> ________X_ [style=\"dashed\"] ");
             }
 
             foreach (Node n in node.Futures)
@@ -206,16 +269,28 @@ namespace TicTacToeGame
                 {
                     sw.WriteLine($"_{node.Board.KeyString()} -> _{n.Board.KeyString()} [color=\"{color}\"] ");
                 }
-                else if(n.BestParent == null)
+                else if (node.Board.NextMoveNum > 0 && node.Board.NextMoveNum < 2)
                 {
-                    // TODO add fake nodes to adjust rank
+                    sw.WriteLine($"_{node.Board.KeyString()} -> _{n.Board.KeyString()} [style=\"dashed\"] ");
                 }
-                WriteDotFileEdgesBestMoveOnly(n, sw);
+                else if (!n.BestParents.Any())
+                {
+                    // add fake nodes to adjust rank
+                    int invisParentNum = node.Board.NextMoveNum;
+                    for (int i = 0; i < invisParentNum; i++)
+                    {
+                        sw.WriteLine($"invis{i}_{n.Board.KeyString()} [style=\"invis\"] ");
+                        sw.WriteLine($"invis{i}_{n.Board.KeyString()} -> invis{i+1}_{n.Board.KeyString()} [style=\"invis\"] ");
+                    }
+                    sw.WriteLine($"invis{invisParentNum}_{n.Board.KeyString()} [style=\"invis\"] ");
+                    sw.WriteLine($"invis{invisParentNum}_{n.Board.KeyString()} -> _{n.Board.KeyString()} [style=\"invis\"] ");
+                }
+                WriteDotFileEdgesBestMoveOnlyManyRoots(n, _, sw);
             }
 
         }
 
-        static void WriteDotFileEdgesBestScore(Node node, StreamWriter sw)
+        static void WriteDotFileEdgesBestScore(Node node, Dictionary<int, List<Node>> _, StreamWriter sw)
         {
             if (!node.Futures.Any()) return;
             int bestFutureScore = 0;
@@ -228,11 +303,11 @@ namespace TicTacToeGame
                 else color = "3";
 
                 sw.WriteLine($"_{node.Board.KeyString()} -> _{n.Board.KeyString()} [color=\"{color}\"] ");
-                WriteDotFileEdgesBestScore(n, sw);
+                WriteDotFileEdgesBestScore(n, _, sw);
             }
         }
 
-        static void WriteDotFileEdgesBestScoreOnly(Node node, StreamWriter sw)
+        static void WriteDotFileEdgesBestScoreOnly(Node node, Dictionary<int, List<Node>> _, StreamWriter sw)
         {
             if (!node.Futures.Any()) return;
             int bestFutureScore = 0;
@@ -245,7 +320,7 @@ namespace TicTacToeGame
                 {
                     sw.WriteLine($"_{node.Board.KeyString()} -> _{n.Board.KeyString()} [color=\"{color}\"] ");
                 }
-                WriteDotFileEdgesBestScoreOnly(n, sw);
+                WriteDotFileEdgesBestScoreOnly(n, _, sw);
             }
         }
 
