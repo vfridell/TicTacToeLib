@@ -15,7 +15,9 @@ namespace TicTacToeGame
         public string XWinNodeColor { get; set; }
         public string OWinNodeColor { get; set; }
         public string DrawNodeColor { get; set; }
-        public string ColorScheme { get; set; }
+        public string NodeColorScheme { get; set; }
+        public string GraphColorScheme { get; set; }
+        public string EdgeColorScheme { get; set; }
         public bool ShowScore { get; set; }
         public string XAlmostWinColor { get; set; }
         public string OAlmostWinColor { get; set; }
@@ -27,5 +29,7 @@ namespace TicTacToeGame
         public string NodeDefaultFillColor { get; internal set; }
         public string EdgeHighlightColor { get; internal set; }
         public string EdgeMinimalColor { get; internal set; }
+        public string XNodeColorScheme { get; internal set; }
+        public string ONodeColorScheme { get; internal set; }
     }
 }
