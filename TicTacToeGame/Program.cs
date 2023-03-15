@@ -53,7 +53,7 @@ namespace TicTacToeGame
                 EdgeColorScheme = "rdgy9",
                 EdgeHighlightColor = "9",
                 EdgeMinimalColor = "6",
-                FontName = "courier new",
+                FontName = "cascadia code",
                 ShowScore = false,
             };
 
@@ -68,6 +68,7 @@ namespace TicTacToeGame
             graphviz.TryGenerateGraph("TicTacToe_HighlightBestMove.dot", GraphvizDriver.OutputFormat.PDF, out imageFilename);
 
             options.RankSeparation = 4;
+            options.GraphLabel = "Tic-Tac-Toe";
             GraphWriterBestMovesOnlyTrimmed graphWriterBestMovesOnlyTrimmed = new(options);
             graphWriterBestMovesOnlyTrimmed.WriteDotFile("TicTacToe_bestMoveForestTrimmed.dot", root, treeLevels);
             graphviz.TryGenerateGraph("TicTacToe_bestMoveForestTrimmed.dot", GraphvizDriver.OutputFormat.PDF, out imageFilename);

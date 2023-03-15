@@ -11,6 +11,48 @@ namespace TicTacToeGame
     {
         public GraphWriterBestMovesOnlyTrimmed(GraphOptions options) : base(options) { }
 
+        public override void WriteDotFileHeaders(StreamWriter sw)
+        {
+            string fileHeader = $"strict digraph TicTacToe\n{{\ngraph[label=\"{Options.GraphLabel}\" fontname=\"{Options.FontName}\" fontcolor=\"{Options.NodeFontColor}\" size=\"48,36\" ratio=\"-1.33\" pad=\"1.5\" labelloc=t labeljust=c fontsize={Options.GraphLabelFontSize} overlap = \"false\" splines = \"true\" rankdir=TB ranksep=\"{Options.RankSeparation} equally\" colorscheme=\"{Options.GraphColorScheme}\" bgcolor=\"{Options.GraphBgColor}\"]";
+            string nodeHeader = $"node [shape=none margin=0 colorscheme=\"{Options.NodeColorScheme}\" fillcolor=\"{Options.NodeDefaultFillColor}\" fontcolor=\"{Options.NodeFontColor}\" fontname=\"{Options.FontName}\" fontsize={Options.NodeLabelFontSize}]";
+            string edgeHeader = $"edge [colorscheme=\"{Options.EdgeColorScheme}\"]";
+            sw.WriteLine(fileHeader);
+            sw.WriteLine(nodeHeader);
+            sw.WriteLine(edgeHeader);
+
+            string cluster = @"
+subgraph cluster_levels
+{
+	label = """"
+	bgcolor = ""6""
+	pencolor = ""6""
+
+	node [fontsize=48 margin=.5]
+	X1 [label=""X""]
+	O1 [label=""O""]
+	X2 [label=""X""]
+	O2 [label=""O""]
+	X3 [label=""X""]
+	O3 [label=""O""]
+	X4 [label=""X""]
+	O4 [label=""O""]
+	X5 [label=""X""]
+
+	edge [penwidth=5 arrowsize=2 style=""filled"" colorscheme=""piyg11""]
+	X1 -> O1 [color=""3""]
+	O1 -> X2 [color=""8""]
+	X2 -> O2 [color=""3""]
+	O2 -> X3 [color=""8""]
+	X3 -> O3 [color=""3""]
+	O3 -> X4 [color=""8""]
+	X4 -> O4 [color=""3""]
+	O4 -> X5 [color=""8""]
+}
+";
+            sw.WriteLine(cluster);
+
+        }
+
         protected override void WriteDotFileNodes(Node root, Dictionary<int, List<Node>> treeLevels, StreamWriter sw)
         {
             // do nothing
