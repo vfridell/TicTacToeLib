@@ -60,7 +60,7 @@ namespace TicTacToeGame
             var result = n.Board.GetResult();
             (colorScheme, color) = (Node: n, Result: result) switch
             {
-                { Result: GameResult.Draw} => ($"colorscheme=\"{Options.NodeColorScheme}\"", $"color=\"{Options.NodeFontColor}\" bgcolor=\"{Options.DrawNodeColor}\""),
+                { Result: GameResult.Draw} => ($"colorscheme=\"{Options.NodeColorScheme}\"", $"color=\"{Options.NodeFontColor}\" bgcolor=\"{Options.TieNodeColor}\""),
                 { Result: GameResult.X_Win } => ($"colorscheme=\"{Options.XNodeColorScheme}\"", $"color=\"{Options.NodeFontColor}\" bgcolor=\"{Options.XWinNodeColor}\""),
                 { Result: GameResult.O_Win } => ($"colorscheme=\"{Options.ONodeColorScheme}\"", $"color=\"{Options.NodeFontColor}\" bgcolor=\"{Options.OWinNodeColor}\""),
                 { Node.Score: >= 400 } => ($"colorscheme=\"{Options.XNodeColorScheme}\"", $"color=\"{Options.NodeFontColor}\" bgcolor=\"{Options.XAlmostWinColor}\""),

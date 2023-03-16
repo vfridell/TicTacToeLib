@@ -13,8 +13,8 @@ namespace TicTacToeGame
 
         public override void WriteDotFileHeaders(StreamWriter sw)
         {
-            string fileHeader = $"strict digraph TicTacToe\n{{\ngraph[label=\"{Options.GraphLabel}\" fontname=\"{Options.FontName}\" fontcolor=\"{Options.NodeFontColor}\" size=\"48,36\" ratio=\"-1.33\" pad=\"1.5\" labelloc=t labeljust=c fontsize={Options.GraphLabelFontSize} overlap = \"false\" splines = \"true\" rankdir=TB ranksep=\"{Options.RankSeparation} equally\" colorscheme=\"{Options.GraphColorScheme}\" bgcolor=\"{Options.GraphBgColor}\"]";
-            string nodeHeader = $"node [shape=none margin=0 colorscheme=\"{Options.NodeColorScheme}\" fillcolor=\"{Options.NodeDefaultFillColor}\" fontcolor=\"{Options.NodeFontColor}\" fontname=\"{Options.FontName}\" fontsize={Options.NodeLabelFontSize}]";
+            string fileHeader = $"strict digraph TicTacToe\n{{\ngraph[label={Options.GraphLabel} fontname=\"{Options.FontName}\" fontcolor=\"{Options.NodeFontColor}\" size=\"36,24\" ratio=\"fill\" pad=\"3.75,3.125\" margin=\"0,0\" labelloc=t labeljust=r fontsize={Options.GraphLabelFontSize} overlap = \"false\" splines = \"true\" rankdir=TB ranksep=\"{Options.RankSeparation} equally\" colorscheme=\"{Options.GraphColorScheme}\" bgcolor=\"{Options.GraphBgColor}\" gradientangle=\"270\"]";
+            string nodeHeader = $"node [shape=none margin=.08 colorscheme=\"{Options.NodeColorScheme}\" fillcolor=\"{Options.NodeDefaultFillColor}\" fontcolor=\"{Options.NodeFontColor}\" fontname=\"{Options.FontName}\" fontsize={Options.NodeLabelFontSize}]";
             string edgeHeader = $"edge [colorscheme=\"{Options.EdgeColorScheme}\"]";
             sw.WriteLine(fileHeader);
             sw.WriteLine(nodeHeader);
@@ -24,8 +24,8 @@ namespace TicTacToeGame
 subgraph cluster_levels
 {
 	label = """"
-	bgcolor = ""6""
-	pencolor = ""6""
+	bgcolor = ""#00000000""
+	pencolor = ""#00000000""
 
 	node [fontsize=48 margin=.5]
 	X1 [label=""X""]
@@ -37,6 +37,7 @@ subgraph cluster_levels
 	X4 [label=""X""]
 	O4 [label=""O""]
 	X5 [label=""X""]
+	FIN [label=""fin""]
 
 	edge [penwidth=5 arrowsize=2 style=""filled"" colorscheme=""piyg11""]
 	X1 -> O1 [color=""3""]
@@ -47,6 +48,7 @@ subgraph cluster_levels
 	O3 -> X4 [color=""8""]
 	X4 -> O4 [color=""3""]
 	O4 -> X5 [color=""8""]
+	X5 -> FIN [color=""3""]
 }
 ";
             sw.WriteLine(cluster);
@@ -61,24 +63,8 @@ subgraph cluster_levels
 
         public override void WriteDotFileEdges(Node node, Dictionary<int, List<Node>> treeLevels, StreamWriter sw)
         {
-            sw.WriteLine($"__________ -> _____X____ [style=\"dashed\"] ");
-            sw.WriteLine($"__________ -> ________X_ [style=\"dashed\"] ");
-            sw.WriteLine($"__________ -> invis1 [style=\"invis\"] ");
-            sw.WriteLine($"invis1 [shape=\"none\" style=\"invis\"]");
-            sw.WriteLine($"invis2 [shape=\"none\" style=\"invis\"]");
-            sw.WriteLine($"invis3 [shape=\"none\" style=\"invis\"]");
-            sw.WriteLine($"invis4 [shape=\"none\" style=\"invis\"]");
-            sw.WriteLine($"invis5 [shape=\"none\" style=\"invis\"]");
-            sw.WriteLine($"invis6 [shape=\"none\" style=\"invis\"]");
-            sw.WriteLine($"invis7 [shape=\"none\" style=\"invis\"]");
-            sw.WriteLine($"invis8 [shape=\"none\" style=\"invis\"]");
-            sw.WriteLine($"invis1 -> invis2 [style=\"invis\"]");
-            sw.WriteLine($"invis2 -> invis3 [style=\"invis\"]");
-            sw.WriteLine($"invis3 -> invis4 [style=\"invis\"]");
-            sw.WriteLine($"invis4 -> invis5 [style=\"invis\"]");
-            sw.WriteLine($"invis5 -> invis6 [style=\"invis\"]");
-            sw.WriteLine($"invis6 -> invis7 [style=\"invis\"]");
-            sw.WriteLine($"invis7 -> invis8 [style=\"invis\"]");
+
+            WriteTopOfMoveTree(node, sw);
 
             foreach (Node n in treeLevels[TreeHelpers.LeafLevel])
             {
@@ -87,12 +73,46 @@ subgraph cluster_levels
                 WriteNode(node, sw);
                 WriteDotFileEdgesFromLeaves(n, sw);
             }
+
+            // writing these invisible helper nodes last helps balance the tree
+            sw.WriteLine($"invis2 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis3 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis4 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis5 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis6 [shape=\"none\" style=\"invis\"]");
+            sw.WriteLine($"invis7 [shape=\"none\" style=\"invis\"]");
+
+        }
+
+        /// <summary>
+        /// write the first few ranks of the move tree top down to make the tree appear more balanced
+        /// </summary>
+        private void WriteTopOfMoveTree(Node node, StreamWriter sw)
+        {
+            if (!node.Futures.Any()) return;
+
+            foreach (Node n in node.Futures)
+            {
+                if (n == node.BestFuture)
+                {
+                    // do nothing. we will write these connections from bottom up in WriteDotFileEdgesFromLeaves
+                }
+                else if (node.Board.NextMoveNum < 2)
+                {
+                    sw.WriteLine($"_{node.Board.KeyString()} -> _{n.Board.KeyString()} [style=\"normal\" color=\"{Options.EdgeMinimalColor}\"] ");
+                }
+                else if (node.Board.NextMoveNum > 1)
+                {
+                    return;
+                }
+                WriteTopOfMoveTree(n, sw);
+            }
         }
 
         private void WriteDotFileEdgesFromLeaves(Node node, StreamWriter sw)
         {
             WriteNode(node, sw);
-            if (!node.BestParents.Any() && node.Board.NextMoveNum > 1)
+            if (!node.BestParents.Any() && node.Board.NextMoveNum > 2)
             {
                 int invisParentNum = node.Board.NextMoveNum - 1;
                 sw.WriteLine($"invis{invisParentNum} -> _{node.Board.KeyString()} [style=\"invis\"]");

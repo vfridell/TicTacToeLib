@@ -8,13 +8,13 @@ namespace TicTacToeGame
 {
     public class GraphOptions
     {
-        public int GraphLabelFontSize { get; set; }
-        public int NodeLabelFontSize { get; set; }
+        public double GraphLabelFontSize { get; set; }
+        public double NodeLabelFontSize { get; set; }
         public string NodeFontColor { get; set; }
-        public int RankSeparation { get; set; }
+        public double RankSeparation { get; set; }
         public string XWinNodeColor { get; set; }
         public string OWinNodeColor { get; set; }
-        public string DrawNodeColor { get; set; }
+        public string TieNodeColor { get; set; }
         public string NodeColorScheme { get; set; }
         public string GraphColorScheme { get; set; }
         public string EdgeColorScheme { get; set; }

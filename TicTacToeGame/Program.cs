@@ -38,7 +38,7 @@ namespace TicTacToeGame
                 NodeColorScheme = "",
                 NodeFontColor = "/puor10/10",
                 NodeDefaultFillColor = "/piyg11/6",
-                DrawNodeColor = "/puor10/3",
+                TieNodeColor = "/puor10/3",
 
                 XNodeColorScheme = "",
                 XWinNodeColor = "/piyg11/2",
@@ -58,25 +58,26 @@ namespace TicTacToeGame
             };
 
             var graphviz = (GraphvizDriver)_host.Services.GetRequiredService(typeof(GraphvizDriver));
+            string imageFilename;
 
-            GraphWriterFull graphWriterFull = new(options);
-            graphWriterFull.WriteDotFile("TicTacToe_multicolor.dot", root, treeLevels);
-            graphviz.TryGenerateGraph("TicTacToe_multicolor.dot", GraphvizDriver.OutputFormat.PDF, out string imageFilename);
+            //GraphWriterFull graphWriterFull = new(options);
+            //graphWriterFull.WriteDotFile("TicTacToe_multicolor.dot", root, treeLevels);
+            //graphviz.TryGenerateGraph("TicTacToe_multicolor.dot", GraphvizDriver.OutputFormat.PDF, out imageFilename);
 
-            GraphWriterHighlightBestMove graphWriterHighlightBestMove = new(options);
-            graphWriterHighlightBestMove.WriteDotFile("TicTacToe_HighlightBestMove.dot", root, treeLevels);
-            graphviz.TryGenerateGraph("TicTacToe_HighlightBestMove.dot", GraphvizDriver.OutputFormat.PDF, out imageFilename);
+            //GraphWriterHighlightBestMove graphWriterHighlightBestMove = new(options);
+            //graphWriterHighlightBestMove.WriteDotFile("TicTacToe_HighlightBestMove.dot", root, treeLevels);
+            //graphviz.TryGenerateGraph("TicTacToe_HighlightBestMove.dot", GraphvizDriver.OutputFormat.PDF, out imageFilename);
 
-            options.RankSeparation = 4;
-            options.GraphLabel = "Tic-Tac-Toe";
+            options.RankSeparation = 5;
+            options.GraphLabel = $"<<table border=\"0\" cellborder=\"1\" color=\"{options.NodeFontColor}\"><tr><td sides=\"B\">Tic-Tac-Toe</td></tr><tr><td border=\"0\"><font point-size=\"36\">Best ply chains longer than five</font></td></tr><tr><td border=\"0\" align=\"right\"><font point-size=\"12\">&copy; 2023 Vern Fridell</font></td></tr></table>>";
             GraphWriterBestMovesOnlyTrimmed graphWriterBestMovesOnlyTrimmed = new(options);
             graphWriterBestMovesOnlyTrimmed.WriteDotFile("TicTacToe_bestMoveForestTrimmed.dot", root, treeLevels);
             graphviz.TryGenerateGraph("TicTacToe_bestMoveForestTrimmed.dot", GraphvizDriver.OutputFormat.PDF, out imageFilename);
 
-            options.RankSeparation = 5;
-            GraphWriterBestMovesOnlyForest graphWriterBestMovesOnlyForest = new(options);
-            graphWriterBestMovesOnlyForest.WriteDotFile("TicTacToe_bestMoveForest.dot", root, treeLevels);
-            graphviz.TryGenerateGraph("TicTacToe_bestMoveForest.dot", GraphvizDriver.OutputFormat.PDF, out imageFilename);
+            //options.RankSeparation = 5;
+            //GraphWriterBestMovesOnlyForest graphWriterBestMovesOnlyForest = new(options);
+            //graphWriterBestMovesOnlyForest.WriteDotFile("TicTacToe_bestMoveForest.dot", root, treeLevels);
+            //graphviz.TryGenerateGraph("TicTacToe_bestMoveForest.dot", GraphvizDriver.OutputFormat.PDF, out imageFilename);
 
         }
 
