@@ -77,7 +77,7 @@ namespace TicTacToeGame
         {
             string[] pieces = node.Board.GetPiecesByPosition();
             string scorePart = "";
-            if (node.Score.HasValue && Options.ShowScore) scorePart = $"<tr><td border=\"0\" COLSPAN=\"3\">{node.Score}</td></tr>";
+            if (node.Score.HasValue && Options.ShowScore) scorePart = $"<tr><td border=\"0\" COLSPAN=\"3\"><font point-size=\"{Options.NodeLabelFontSize / 2}\">{node.Score}</font></td></tr>";
             return $"<<table {color} border=\"0\" cellborder=\"1\" cellspacing=\"0\"><tr><td port=\"p8\" sides=\"RB\">{pieces[8]}</td><td port=\"p7\" sides=\"RL\">{pieces[7]}</td><td port=\"p6\" sides=\"LB\">{pieces[6]}</td></tr><tr><td port=\"p5\" sides=\"TB\">{pieces[5]}</td><td port=\"p4\" >{pieces[4]}</td><td port=\"p3\" sides=\"TB\">{pieces[3]}</td></tr><tr><td port=\"p2\" sides=\"TR\">{pieces[2]}</td><td port=\"p1\" sides=\"RL\">{pieces[1]}</td><td port=\"p0\" sides=\"LT\">{pieces[0]}</td></tr>{scorePart}</table>>";
         }
     }
