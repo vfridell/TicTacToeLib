@@ -3,6 +3,9 @@ using Microsoft.Extensions.Hosting;
 using System.Drawing;
 using System.Xml.Linq;
 using TicTacToeLib;
+using Newtonsoft.Json;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace TicTacToeGame
 {
@@ -24,6 +27,8 @@ namespace TicTacToeGame
             int draws = treeLevels[TreeHelpers.LeafLevel].Count(n => n.Board.GetResult() == GameResult.Draw);
 
             TreeHelpers.NegamaxAllTheNodes(root, treeLevels);
+
+            WriteMinifiedJsonFile(root, "tictactoe_min.json");
 
             GraphOptions options = new()
             {
@@ -78,7 +83,19 @@ namespace TicTacToeGame
             //GraphWriterBestMovesOnlyForest graphWriterBestMovesOnlyForest = new(options);
             //graphWriterBestMovesOnlyForest.WriteDotFile("TicTacToe_bestMoveForest.dot", root, treeLevels);
             //graphviz.TryGenerateGraph("TicTacToe_bestMoveForest.dot", GraphvizDriver.OutputFormat.PDF, out imageFilename);
+        }
 
+        private static void WriteMinifiedJsonFile(Node root, string filename)
+        {
+            string json = Newtonsoft.Json.JsonConvert.SerializeObject(root, Formatting.Indented,
+                new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects });
+            Regex whiteSpaceRegex = new Regex(@"\s+|\n");
+            json = whiteSpaceRegex.Replace(json, "");
+            using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
+            using (var writer = new StreamWriter(fs, Encoding.UTF8))
+            {
+                writer.Write(json);
+            }
         }
 
         static void ConfigureTTTServices(HostBuilderContext context, IServiceCollection services)

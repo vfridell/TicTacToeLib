@@ -26,15 +26,6 @@ namespace TicTacToeLib
     // So, 0x71 is a move by X to position 7 on the grid
     public record Move(byte Value)
     {
-        public bool IsValid
-        {
-            get
-            {
-                if (Pos > 8 || (Piece != 1 && Piece != 2)) return false;
-                return true;
-            }
-        }
-
         public int Pos => Value >> 4;
         public int Piece => Value & 0x0F;
 
