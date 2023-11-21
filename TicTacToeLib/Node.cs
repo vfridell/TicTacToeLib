@@ -1,4 +1,6 @@
-﻿namespace TicTacToeLib
+﻿using Newtonsoft.Json;
+
+namespace TicTacToeLib
 {
     public class Node
     {
@@ -18,6 +20,8 @@
         public int? Score;
         public List<Node> Futures = new List<Node>();
         public Node? BestFuture;
+
+        [JsonIgnore]
         public List<Node> BestParents = new List<Node>();
 
     }

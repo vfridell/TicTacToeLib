@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,9 +25,12 @@ namespace TicTacToeLib
     // 0x2 == O
 
     // So, 0x71 is a move by X to position 7 on the grid
+    [JsonObject(MemberSerialization.OptIn)]
     public record Move(byte Value)
     {
+        [JsonProperty]
         public int Pos => Value >> 4;
+        [JsonProperty]
         public int Piece => Value & 0x0F;
 
         public enum PositionName { SE, S, SW, E, C, W, NE, N, NW };

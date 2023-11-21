@@ -88,7 +88,7 @@ namespace TicTacToeGame
         private static void WriteMinifiedJsonFile(Node root, string filename)
         {
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(root, Formatting.Indented,
-                new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects });
+                new JsonSerializerSettings { PreserveReferencesHandling = PreserveReferencesHandling.Objects});
             Regex whiteSpaceRegex = new Regex(@"\s+|\n");
             json = whiteSpaceRegex.Replace(json, "");
             using (FileStream fs = new FileStream(filename, FileMode.Create, FileAccess.Write))
